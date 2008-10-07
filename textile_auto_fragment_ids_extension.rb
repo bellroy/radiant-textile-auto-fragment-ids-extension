@@ -7,8 +7,7 @@ class TextileAutoFragmentIdsExtension < Radiant::Extension
   url "http://github.com/tricycle/radiant-textile-auto-fragment-ids-extension"
   
   def activate
-    PagePart
-    require 'app/models/page_part_ext'
+    PagePart.send(:include, PagePartExt)
   end
   
 end

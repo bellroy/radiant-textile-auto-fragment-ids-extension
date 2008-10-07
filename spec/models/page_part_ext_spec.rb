@@ -48,6 +48,7 @@ describe PagePart do
       "p. multiline\n\np. text"  => "p(#RAND). multiline\n\np(#RAND). text",
       "p."                       => "p.",
       "p. "                      => "p. ",
+      "p.  "                     => "p.  ",
     }
     fixture.each do |input, output|
       it "should produce \"#{output}\" from \"#{input}\"" do
@@ -59,15 +60,28 @@ describe PagePart do
   end
 
   describe "#random_id" do
+    it "should call random_options" do
+      @pp.should_receive(:random_options).at_least(:once).and_return([])
+
+      @pp.send(:random_id)
+    end
     it "should return alphanumeric characters" do
-      @pp.send(:random_id).should match(/^[A-Z0-9]*$/)
+      @pp.send(:random_options).join.should match(/^[a-z0-9]*$/)
+    end
+    it "should not include easy to confuse characters" do
+      [ "u", "v", "l", "1" ].each do |i|
+        @pp.send(:random_options).include?(i).should_not be_true
+      end
     end
     it "should return 4 characters" do
-      @pp.send(:random_id).length.should == 4
+      3.times do
+        @pp.send(:random_id).length.should == 4
+      end
     end
     it "should return random strings" do
-      @pp.send(:random_id).should_not == @pp.send(:random_id)
-      @pp.send(:random_id).should_not == @pp.send(:random_id)
+      3.times do
+        @pp.send(:random_id).should_not == @pp.send(:random_id)
+      end
     end
   end
 end
